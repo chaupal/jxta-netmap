@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="jxta install" basedir="." default="install">
+
+    <property name="root" value=".."/>
+
+    <property file="./ant.properties"/>
+    <property file="${root}/ant.properties"/>
+
+    <property name="cvs.project" value="jxtanetmap"/>
+    <property name="cvs.version" value=""/>
+    <property name="cvs.user" value="guest"/>
+    <property name="cvs.server" value="cvs.jxta.org"/>
+    <property name="cvs.directory" value="${cvs.project}"/>
+    <property name="cvs.destination" value="."/>
+    <property name="cvs.project.platform" value="platform"/>
+
+    <target name="install" depends="prepare" description="project installation">
+        <antcall target="dependency">
+            <param name="dependency.dir" value="${cvs.project.platform}"/>
+            <param name="dependency.user" value="${cvs.user}"/>
+            <param name="dependency.server" value="${cvs.server}"/>
+            <param name="dependency.package" value="${cvs.project.platform}"/>
+            <param name="dependency.version" value="${cvs.version}"/>
+            <param name="dependency.root" value="${root}"/>
+        </antcall>
+
+        <cvs command="update -Pd"
+             cvsRoot=":pserver:${cvs.user}@${cvs.server}:/cvs"
+             tag="${cvs.version}"/>
+
+        <ant antfile="build.xml"
+             dir="."
+             inheritAll="false"/>
+    </target>
+
+    <target name="dist" depends="prepare">
+        <ant antfile="build.xml"
+             target="dist"
+             dir="."
+             inheritAll="false"/>
+    </target>
+
+    <target name="prepare" depends="http.proxy, socks.proxy, cvs">
+        <condition property="platform.installed">
+            <and>
+                <available file="${root}/platform/binding/java/dist/jxta.jar"/>
+            </and>
+        </condition>
+    </target>
+
+    <target name="http.proxy" if="http.proxyHost">
+        <setproxy proxyhost="${http.proxyHost}" proxyport="${http.proxyPort}"/>
+    </target>
+
+    <target name="socks.proxy" if="socks.proxyHost">
+        <setproxy socksproxyhost="${socks.proxyHost}"
+                  socksproxyport="${socks.proxyPort}"/>
+    </target>
+
+    <target name="cvs">
+        <exec executable="cvs" failifexecutionfails="true"
+              outputproperty="cvs.ignore"/>
+    </target>
+
+    <target name="dependency" unless="platform.installed">
+        <cvs command="checkout -d ${dependency.dir}"
+             cvsRoot=":pserver:${dependency.user}@${dependency.server}:/cvs"
+             package="${dependency.package}"
+             tag="${dependency.version}"
+             dest="${dependency.root}"/>
+
+        <ant antfile="install.xml"
+             dir="${dependency.root}/${dependency.dir}"
+             inheritAll="false"/>
+    </target>
+
+</project>
