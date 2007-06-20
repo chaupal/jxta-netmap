@@ -24,10 +24,10 @@ DIST          = $(TOP)/dist
 LIBDIR        = $(PKGDIR)/lib
 
 ifeq ($(PLATFORM),)
-  PLATFORM = $(TOP)/../platform/binding/java
+  PLATFORM = $(TOP)/../jxta-jxse
 endif
 ifeq ($(JXTASHELL),)
-  JXTASHELL = $(TOP)/../shell/binding/java/dist/jxtashell.jar
+  JXTASHELL = $(TOP)/../jxse-shell/dist/jxtashell.jar
 endif
 
 PLATFORMDIST = $(PLATFORM)/dist
@@ -75,8 +75,8 @@ compile: clean
 jar: compile
 	@echo Creating $(DIST)/NetMapRendezvous.jar
 	@if [ '!' -d $(DIST)/tmp ]; then mkdir $(DIST)/tmp; fi;
-	@cd $(DIST)/tmp/; jar -xf ../netmap.jar; jar xf $(TOP)/lib/prefuse.jar; jar xf $(PLATFORM)/lib/bcprov-jdk14.jar; jar xf $(PLATFORMDIST)/jxta.jar; jar xf $(PLATFORM)/lib/log4j.jar; rm -rf META-INF;
-	@cd $(DIST)/tmp/;$(JAR) -cmf $(TOP)/newviewer.mf $(DIST)/NetMapView.jar  *; cd ..; rm -rf tmp;
+	@cd $(DIST)/tmp/; jar -xf ../netmap.jar; jar xf $(TOP)/lib/prefuse.jar; jar xf $(PLATFORM)/lib/bcprov-jdk14.jar; jar xf $(PLATFORMDIST)/jxta.jar; rm -rf META-INF;
+	@cd $(DIST)/tmp/;$(JAR) -cmf $(TOP)/viewer.mf $(DIST)/NetMapView.jar  *; cd ..; rm -rf tmp;
 run: 
 	@$(JAVA) -DJXTA_HOME=$(JHOME) -Dnet.jxta.tls.password="password" -classpath $(JXTACLASSPATH) JxtaNetMap
 new:
