@@ -50,7 +50,6 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
 
 <project name="netmap" default="jar" basedir=".">
     <property file="build.properties"/>
-    <property file="${user.home}/build.properties"/>
     <property name="build.properties" value="build.properties"/>
 
     <!-- Setup Classpath -->
@@ -160,6 +159,22 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
     <!-- Run the JxtaNetMap application -->
     <target name="netmap" depends="jar" description="Run old Netmap Viewer">
         <java classname="JxtaNetMap" failonerror="yes" fork="yes">
+            <jvmarg value="-DJXTA_HOME=${jxta.home}"/>
+            <sysproperty key="net.jxta.level" value="CONFIG" />
+            <sysproperty key="net.jxta.logging.Logging" value="FINE"/>
+            <sysproperty key="java.util.logging.config.file" value="${jxtaroot}/logging.properties" />
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="${netmapviewerjar}"/>
+                <fileset dir="${shell.dist}">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </java>
+    </target>
+    <!-- Run the JxtaNetMap application -->
+    <target name="rdv" depends="jar" description="run a rendezvous">
+        <java classname="rendezvous.iViewRendezvous" failonerror="yes" fork="yes">
             <jvmarg value="-DJXTA_HOME=${jxta.home}"/>
             <sysproperty key="net.jxta.level" value="CONFIG" />
             <sysproperty key="net.jxta.logging.Logging" value="FINE"/>
