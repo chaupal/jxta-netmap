@@ -124,7 +124,7 @@ public class iViewRendezvous extends Rendezvous implements EndpointListener, Run
         try {
             broadcastPipe = pipeService.createOutputPipe(pipeAdv, 1);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            LOG.log(Level.WARNING, "Failed to create output pipe.", ioe);
         }
 
         Thread thread = new Thread(this, "iView reporter Thread : " + timeout);
@@ -148,7 +148,7 @@ public class iViewRendezvous extends Rendezvous implements EndpointListener, Run
             pipeAdv.setPipeID(pID);
             pipeAdv.setType(PipeService.PropagateType);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.log(Level.INFO, "Failed to create pipe advertisement.", e);
             return null;
         }
         return pipeAdv;
@@ -218,7 +218,7 @@ public class iViewRendezvous extends Rendezvous implements EndpointListener, Run
             //System.out.println("Sending :\n"+response.toString());
             send(peerid, msg);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.log(Level.INFO, "Failed to send message " + msg, e);
         }
     }
 
@@ -235,7 +235,7 @@ public class iViewRendezvous extends Rendezvous implements EndpointListener, Run
                 broadcastPipe.send(msg);
             }
         } catch (IOException io) {
-            io.printStackTrace();
+            LOG.log(Level.INFO, "Failed to send message " + msg, io);
         }
     }
 
@@ -267,7 +267,7 @@ public class iViewRendezvous extends Rendezvous implements EndpointListener, Run
                     PeerID pID = (PeerID) IDFactory.fromURI(uri);
                     respond(pID);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOG.log(Level.INFO, "Failed to process message " + message, e);
                     return;
                 }
 
@@ -285,7 +285,7 @@ public class iViewRendezvous extends Rendezvous implements EndpointListener, Run
                     */
                 }
             } catch (Throwable t) {
-                t.printStackTrace(System.err);
+                LOG.log(Level.INFO, "Failed to process message " + message, t);
             }
         }
     }
