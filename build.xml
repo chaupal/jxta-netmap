@@ -68,6 +68,7 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
     <!-- Prep the needed directories -->
     <target name="prepare">
         <tstamp/>
+        <mkdir dir="${tmp}"/>
 
     </target>
 
@@ -77,6 +78,7 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
         <delete dir="${javadoc}"/>
         <delete dir="${distbase}"/>
         <delete dir="${jnlp}"/>
+        <delete dir="${tmp}"/>
         <delete dir="docs"/>
     </target>
 
@@ -246,8 +248,14 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
         <!-- compress the files -->
         <zip destfile="${distbase}/jxtanetmap_${release}.zip">
             <zipfileset dir="." prefix="jxtanetmap-${release}">
+                <exclude name="**/.*" />
+                <exclude name="**/.*/**" />
+                <exclude name="nbproject/private/**" />
+                <exclude name="www/**" />
                 <exclude name="${distbase}/**"/>
                 <exclude name="${classes}/**"/>
+                <exclude name="${jnlp}/**"/>
+                <exclude name="${tmp}/**"/>
             </zipfileset>
         </zip>
     </target>
