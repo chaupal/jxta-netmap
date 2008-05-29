@@ -239,8 +239,9 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
       </dname>
     </genkey>
   </target>
+
     <!-- Make a distribution -->
-    <target name="dist" depends="compile, jar, javadocs" description="Create a zipped distribution">
+    <target name="dist" depends="compile, jar, javadocs, jnlp" description="Create a zipped distribution">
 
         <!-- compress the files -->
         <zip destfile="${distbase}/jxtanetmap_${release}.zip">
