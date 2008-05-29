@@ -76,6 +76,7 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
         <delete dir="${classes}"/>
         <delete dir="${javadoc}"/>
         <delete dir="${distbase}"/>
+        <delete dir="${jnlp}"/>
         <delete dir="docs"/>
     </target>
 
@@ -206,6 +207,38 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
         </java>
     </target>
 
+  <target name="dosign" depends="make.ephemeral" unless="net.jxta.build.nosign" >
+    <echo>Signing with "${net.jxta.build.keystore}"</echo>
+    
+    <signjar jar="${netmapviewerjar}" 
+        keystore="${net.jxta.build.keystore}"
+        storepass="${net.jxta.build.storepass}"
+        alias="${net.jxta.build.signeralias}"
+        keypass="${net.jxta.build.keypass}"/>
+  </target>
+
+  <target name="signjar" depends="jar, dosign" description="Signs the Shell JXTA Jar file" />
+
+  <!-- creates the ephemeral keystore unless there is a defined keystore. -->
+  <target name="make.ephemeral" unless="net.jxta.build.keystore">
+    <tempfile property="net.jxta.build.keystore" destdir="${tmp}" prefix="jxta.netmap." suffix=".keystore" />
+    <property name="net.jxta.build.storepass" value="jxta.netmap" />
+    <property name="net.jxta.build.signeralias" value="jxta.netmap" />
+    <property name="net.jxta.build.keypass" value="jxta.netmap" />
+    <property name="key.cn" value="netmap.jxta.org" />
+    <property name="key.ou" value="${key.cn}" />
+    <property name="key.o" value="${key.cn}" />
+    <property name="key.c" value="US" />
+    <property name="key.validity" value="525" />
+    <genkey keystore="${net.jxta.build.keystore}" storepass="${net.jxta.build.storepass}" alias="${net.jxta.build.signeralias}" keypass="${net.jxta.build.keypass}" validity="${key.validity}">
+      <dname>
+        <param name="CN" value="${key.cn}" />
+        <param name="OU" value="${key.ou}" />
+        <param name="O" value="${key.o}" />
+        <param name="C" value="${key.c}" />
+      </dname>
+    </genkey>
+  </target>
     <!-- Make a distribution -->
     <target name="dist" depends="compile, jar, javadocs" description="Create a zipped distribution">
 
@@ -218,4 +251,71 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
         </zip>
     </target>
 
+  <target name="jnlp" depends="signjar" description="Build JXTA NetMap JNLP distribution">
+    <delete dir="${jnlp}"/>
+    <mkdir dir="${jnlp}" />    
+    <!-- set up the jnlp path. -->
+    <condition property="net.jxta.build.jnlp.baseurl" value="file://${basedir}/jnlp">
+      <not>
+        <isset property="net.jxta.build.jnlp.baseurl"/>
+      </not>
+    </condition>
+    <!-- xxx: would be nice to derive the jar list -->
+    <echo file="${jnlp}/jxtanetmap.jnlp"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+"
+      codebase="${net.jxta.build.jnlp.baseurl}"
+      href="netmap.jnlp">
+  <information>
+    <title>JXTA NetMap</title>
+    <vendor>jxta-netmap.dev.java.net</vendor>
+    <homepage href="http://jxta-netmap.dev.java.net"/>
+    <description>JXTA NetMap</description>
+    <shortcut>
+      <desktop online="true"/>
+      <menu submenu="JXTA NetMap" online="true"/>
+    </shortcut>
+  </information>
+  <security>
+    <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.5+" initial-heap-size="64m" max-heap-size="192m"/>
+    <j2se href="http://java.sun.com/products/autodl/j2se" version="1.5+"/>
+    <package name="net.jxta.netmap.*" part="netmap" recursive="true"/>
+    <jar href="lib/NetMapViewer.jar" main="true" download="eager"/>
+    <extension href="platform-ext.jnlp" />
+    <extension href="shell-ext.jnlp" />
+    <extension href="prefuse-ext.jnlp" />
+    <extension href="graphlayout-ext.jnlp" />
+    <property name="net.jxta.tls.password" value="password" />
+    <property name="JXTA_HOME" value=".jxtanetmap" />
+  </resources>
+  <application-desc main-class="JxtaNetMap" />
+</jnlp>]]>
+    </echo>
+
+    <echo file="${jnlp}/graphlayout-ext.jnlp"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+"
+      codebase="${net.jxta.build.jnlp.baseurl}"
+      href="graphlayout-ext.jnlp">
+  <information>
+    <title>TouchGraph GraphLayout</title>
+    <vendor>TouchGraph</vendor>
+    <homepage href="http://touchgraph.sourceforge.net/" />
+    <description>GraphLayout</description>
+  </information>
+  <security>
+    <all-permissions/>
+  </security>
+  <resources>
+    <package name="com.touchgraph.graphlayout.*" part="graphlayout" recursive="true"/>
+    <jar href="lib/GraphLayout.jar" part="graphlayout" download="lazy"/>
+  </resources>
+  <component-desc/>
+</jnlp>]]>
+    </echo>
+
+    <copy todir="${jnlp}/lib" file="${netmapviewerjar}"/>
+    <copy todir="${jnlp}/lib" file="${graphlayoutjar}"/>
+  </target>
 </project>
