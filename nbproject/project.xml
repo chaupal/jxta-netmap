@@ -54,8 +54,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/1">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">lib/GraphLayout.jar:lib/prefuse.jar:../platform/binding/java/dist/jxta.jar
-                </classpath>
+                <classpath mode="compile">../jxta-jxse/dist/jxta.jar:lib/GraphLayout.jar:lib/prefuse.jar:../jxse-shell/dist/jxtashell.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>
