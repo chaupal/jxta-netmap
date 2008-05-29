@@ -974,8 +974,8 @@ public class JxtaNetMap extends GLPanel implements EndpointListener, PipeMsgList
                 config.setPassword(System.getProperty("net.jxta.tls.password", "password"));
                 config.setTcpStartPort(9701);
                 config.setTcpEndPort(9799);
-                config.addRdvSeedingURI(URI.create("http://rdv.jxtahosts.net/cgi-bin/rendezvous.cgi?2"));
-                config.addRelaySeedingURI(URI.create("http://rdv.jxtahosts.net/cgi-bin/relays.cgi?2"));
+                config.addRdvSeedingURI(URI.create("http://rdv.jxtahosts.net/cgi-bin/rendezvous.cgi?3"));
+                config.addRelaySeedingURI(URI.create("http://rdv.jxtahosts.net/cgi-bin/relays.cgi?3"));
                 config.save();
             } else {
                 config.load();
