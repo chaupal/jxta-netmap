@@ -273,7 +273,7 @@ $Id: build.xml,v 1.10 2007/05/14 17:39:30 bondolo Exp $
     <echo file="${jnlp}/jxtanetmap.jnlp"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0+"
       codebase="${net.jxta.build.jnlp.baseurl}"
-      href="netmap.jnlp">
+      href="jxtanetmap.jnlp">
   <information>
     <title>JXTA NetMap</title>
     <vendor>jxta-netmap.dev.java.net</vendor>
